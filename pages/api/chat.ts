@@ -11,6 +11,7 @@ export default async function handler(
   const { question, history } = req.body;
 
   console.log('question', question);
+  console.log('history', history);
 
   //only accept post requests
   if (req.method !== 'POST') {
@@ -27,20 +28,29 @@ export default async function handler(
   try {
 
     /* create vectorstore*/
+    console.log("111111111111111111111111111111111111111")
     const vectorStore = await Chroma.fromExistingCollection(
       new OpenAIEmbeddings({}),
       {
         collectionName: COLLECTION_NAME,
+        url:'http://192.168.31.107:9000',
+        
        },
     );
 
+    console.log(vectorStore,"2222222222222222222222")
+
     //create chain
+    
     const chain = makeChain(vectorStore);
     //Ask a question using chat history
+    console.log(chain,"333333333333333333333333333333333333333333333")
     const response = await chain.call({
       question: sanitizedQuestion,
       chat_history: history || [],
-    });
+      
+    }
+    ,{});
 
     console.log('response', response);
     res.status(200).json(response);
